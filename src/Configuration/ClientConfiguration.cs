@@ -9,23 +9,27 @@ namespace Tsubasa.Configuration
         public int[] ShardIds { get; set; }
         public int MessageCacheSize { get; set; }
 
+        public string Prefix { get; set; }
+
         /// <summary>
         /// Custom configuration of the client 
         /// </summary>
         /// <param name="token">of the client to login to</param>
         /// <param name="shardIds">Ids of shards for the client</param>
         /// <param name="messageCacheSize">max size of the message cache</param>
-        public ClientConfiguration(string token, int[] shardIds, int messageCacheSize)
+        /// <param name="prefix">the prefix for the bot</param>
+        private ClientConfiguration(string token, int[] shardIds, int messageCacheSize, string prefix)
         {
             Token = token;
             ShardIds = shardIds;
             MessageCacheSize = messageCacheSize;
+            Prefix = prefix;
         }
 
         /// <summary>
         /// Base configuration for a client
         /// </summary>
-        public ClientConfiguration() : this("your_token_here", new[] {0}, 100)
+        public ClientConfiguration() : this("your_token_here", new[] {0}, 100, "t>")
         {
         }
 
