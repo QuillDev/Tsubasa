@@ -13,10 +13,7 @@ namespace Tsubasa
 
         private static async Task OnLogin()
         {
-            await Task.Run(() =>
-            {
-                Console.WriteLine("Client logged in");
-            });
+            await Task.Run(() => { Console.WriteLine("Client logged in"); }).ConfigureAwait(false);
         }
     }
 }

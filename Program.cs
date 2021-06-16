@@ -5,24 +5,25 @@ using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Tsubasa.Configuration;
+using Tsubasa.Services;
 
 namespace Tsubasa
 {
-    class Program
+    internal static class Program
     {
-        private static readonly int[] ShardIds = {0};
 
         private static void Main(string[] args)
         {
-            new Program().RunAsync().GetAwaiter().GetResult();
+            RunAsync().GetAwaiter().GetResult();
         }
-
-        private async Task RunAsync()
+        
+        /// <summary>
+        /// Run the program in an asynchronous context so we can do all kinds of cool networking stuff
+        /// </summary>
+        private static async Task RunAsync()
         {
-            var configManager = new ConfigManager();
-            var config = await configManager.LoadConfig(); //Load the config from the config manager
-
-            var services = GetServiceProvider(config); //get the service provider
+            var config = await ConfigManager.LoadConfig(); //Load the config from the config manager
+            var services = ServiceManager.GetServiceProvider(config); //get the service provider
 
             //if the client service is bugging, just close the program
             var client = services.GetService<Tsubasa>();
@@ -36,20 +37,6 @@ namespace Tsubasa
 
             //Configure an infinite delay since we're a server
             await Task.Delay(Timeout.Infinite).ConfigureAwait(false);
-        }
-
-        IServiceProvider GetServiceProvider(ClientConfiguration clientConfiguration)
-        {
-            return new ServiceCollection()
-                .AddSingleton(new Tsubasa(clientConfiguration.ShardIds, new DiscordSocketConfig
-                {
-                    MessageCacheSize = clientConfiguration.MessageCacheSize,
-                    AlwaysDownloadUsers = false, //TODO: see if needed for some other feature later
-                    LogLevel = LogSeverity.Verbose,
-                    TotalShards = clientConfiguration.ShardIds.Length
-                    
-                })) //Add Discord Client
-                .BuildServiceProvider();
         }
     }
 }

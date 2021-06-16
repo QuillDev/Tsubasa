@@ -18,7 +18,7 @@ namespace Tsubasa.Configuration
             .Build();
 
 
-        public async Task<ClientConfiguration> LoadConfig()
+        public static async Task<ClientConfiguration> LoadConfig()
         {
             return await Task.Run(() =>
             {
@@ -47,7 +47,7 @@ namespace Tsubasa.Configuration
                 var contents = StreamReader.ReadToEndAsync().Result;
                 config = Deserializer.Deserialize<ClientConfiguration>(contents);
                 return config;
-            });
+            }).ConfigureAwait(false);
         }
     }
 }
