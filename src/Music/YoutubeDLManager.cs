@@ -46,45 +46,30 @@ namespace Tsubasa.Music
             });
         }
 
-        public static async Task DownloadVideoAudio(string url)
+        public static async Task<Process> DownloadVideoAudio(string url)
         {
             // Example command youtube-dl https://youtu.be/y2XArpEcygc --extract-audio --audio-format mp3
 
-            await Task.Run(() =>
+            return await Task.Run(() =>
             {
-                if (OperatingSystem.IsWindows())
+                if (!OperatingSystem.IsWindows()) throw new Exception("Some shit happened ig");
+
+                //TODO: Add a linux way to do this
+                using var process = Process.Start(
+                    new ProcessStartInfo
+                    {
+                        FileName = "youtube-dl",
+                        Arguments = $"{url} --output - --quiet --audio-format opus --postprocessor",
+                        RedirectStandardOutput = true,
+                    });
+
+                if (process == null)
                 {
-                    using var process = Process.Start(
-                        new ProcessStartInfo
-                        {
-                            FileName = YoutubeDlPath,
-                            Arguments = $"{url} --extract-audio --audio-format mp3",
-                            RedirectStandardOutput = true
-                        });
-
-                    //TODO: Add custom exceptions
-                    if (process == null)
-                    {
-                        throw new NullReferenceException(
-                            $"Issue when trying to download audio for url {url}! Process is null!");
-                    }
-
-                    while (!process.HasExited)
-                    {
-                        while (!process.StandardOutput.EndOfStream)
-                        {
-                            Console.WriteLine(process.StandardOutput.ReadLine());
-                        }
-                    }
-
-
-                    process.WaitForExitAsync();
+                    throw new NullReferenceException(
+                        $"Issue when trying to download audio for url {url}! Process is null!");
                 }
 
-                else if (OperatingSystem.IsLinux())
-                {
-                    Console.WriteLine("Linux is not yet implemented");
-                }
+                return process;
             }).ConfigureAwait(false);
         }
 

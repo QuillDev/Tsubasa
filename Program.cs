@@ -29,8 +29,7 @@ namespace Tsubasa
             
             //Download youtube dl
             await YoutubeDlManager.CheckYoutubeDl();
-            await YoutubeDlManager.DownloadVideoAudio("https://www.youtube.com/watch?v=G5hScSFkib4");
-            
+
 
             await services.GetRequiredService<CommandHandlerService>().ConfigureAsync();
             services.GetRequiredService<DiscordEventHandlerService>().Configure();

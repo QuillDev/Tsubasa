@@ -24,6 +24,7 @@ namespace Tsubasa.Services
                 .AddSingleton<DiscordEventHandlerService>()
                 .AddSingleton<EmbedHelperService>()
                 .AddSingleton<GeneralCommandService>()
+                .AddSingleton<MusicCommandService>()
                 .BuildServiceProvider();
         }
     }
