@@ -28,7 +28,7 @@ namespace Tsubasa.Music
             await Task.Run(async () =>
             {
                 //If the OS is Windows use curl
-                if (OperatingSystem.IsWindows())
+                if (OperatingSystem.IsWindows() || OperatingSystem.IsLinux())
                 {
                     using var process = Process.Start(
                         new ProcessStartInfo
@@ -50,7 +50,7 @@ namespace Tsubasa.Music
                     return;
                 }
 
-                Console.WriteLine("OS's not on windows are not yet supported!");
+                Console.WriteLine("Tsubasa currently only supports Linux and Windows!");
             });
         }
     }
