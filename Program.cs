@@ -1,17 +1,17 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Microsoft.Extensions.DependencyInjection;
 using Tsubasa.Components;
 using Tsubasa.Configuration;
+using Tsubasa.Music;
 using Tsubasa.Services;
 
 namespace Tsubasa
 {
     internal static class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             RunAsync().GetAwaiter().GetResult();
         }
@@ -26,6 +26,9 @@ namespace Tsubasa
 
             //if the client service is bugging, just close the program
             var client = services.GetRequiredService<Tsubasa>();
+            
+            //Download youtube dl
+            await YoutubeDlManager.CheckYoutubeDl();
 
             await services.GetRequiredService<CommandHandlerService>().ConfigureAsync();
             services.GetRequiredService<DiscordEventHandlerService>().Configure();
