@@ -46,6 +46,51 @@ namespace Tsubasa.Music
             });
         }
 
+        public static async Task DownloadVideoAudio(string url)
+        {
+            // Example command youtube-dl https://youtu.be/y2XArpEcygc --extract-audio --audio-format mp3
+
+            await Task.Run(() =>
+            {
+                if (OperatingSystem.IsWindows())
+                {
+                    using var process = Process.Start(
+                        new ProcessStartInfo
+                        {
+                            FileName = YoutubeDlPath,
+                            Arguments = $"{url} --extract-audio --audio-format mp3",
+                            RedirectStandardOutput = true
+                        });
+
+                    //TODO: Add custom exceptions
+                    if (process == null)
+                    {
+                        throw new NullReferenceException(
+                            $"Issue when trying to download audio for url {url}! Process is null!");
+                    }
+
+                    while (!process.HasExited)
+                    {
+                        while (!process.StandardOutput.EndOfStream)
+                        {
+                            Console.WriteLine(process.StandardOutput.ReadLine());
+                        }
+                    }
+
+
+                    process.WaitForExitAsync();
+                }
+
+                else if (OperatingSystem.IsLinux())
+                {
+                    Console.WriteLine("Linux is not yet implemented");
+                }
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Set file permissions to make sure youtube-dl is executable on linux machines
+        /// </summary>
         private static async Task SetLinuxPermissions()
         {
             using var process = Process.Start(
@@ -63,7 +108,7 @@ namespace Tsubasa.Music
                 return;
             }
 
-            await process.WaitForExitAsync();
+            await process.WaitForExitAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -79,13 +124,13 @@ namespace Tsubasa.Music
                     RedirectStandardOutput = false,
                 });
 
+            //TODO: Add custom exceptions
             if (process == null)
             {
-                Console.WriteLine("Could not find curl... How?");
-                return;
+                throw new NullReferenceException($"error when trying to download YoutubeDL! Process is null!");
             }
 
-            await process.WaitForExitAsync();
+            await process.WaitForExitAsync().ConfigureAwait(false);
         }
     }
 }
