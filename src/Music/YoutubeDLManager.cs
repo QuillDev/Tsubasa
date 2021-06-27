@@ -52,7 +52,7 @@ namespace Tsubasa.Music
                 new ProcessStartInfo
                 {
                     FileName = "/bin/bash",
-                    Arguments = $"sudo chmod a+rx {YoutubeDlPath}"
+                    Arguments = $"chmod a+rx {YoutubeDlPath}"
                 });
 
             //TODO: Throw Exceptions
