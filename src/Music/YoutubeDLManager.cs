@@ -30,21 +30,13 @@ namespace Tsubasa.Music
                 //If the OS is Windows use curl
                 if (OperatingSystem.IsWindows() || OperatingSystem.IsLinux())
                 {
-                    using var process = Process.Start(
-                        new ProcessStartInfo
-                        {
-                            FileName = "curl",
-                            Arguments = $"-L {YoutubeDlUrl} -o {YoutubeDlPath}",
-                            RedirectStandardOutput = false,
-                        });
+                    await DownloadYoutubeDl();
 
-                    if (process == null)
+                    //if the os is linux we need to change the permissions of the file
+                    if (OperatingSystem.IsLinux())
                     {
-                        Console.WriteLine("Could not find curl... How?");
-                        return;
+                        await SetLinuxPermissions();
                     }
-
-                    await process.WaitForExitAsync();
 
                     Console.WriteLine("Successfully downloaded youtube-dl");
                     return;
@@ -52,6 +44,47 @@ namespace Tsubasa.Music
 
                 Console.WriteLine("Tsubasa currently only supports Linux and Windows!");
             });
+        }
+
+        private static async Task SetLinuxPermissions()
+        {
+            using var process = Process.Start(
+                new ProcessStartInfo
+                {
+                    FileName = "/bin/bash",
+                    Arguments = $"sudo chmod a+rx {YoutubeDlPath}"
+                });
+
+            //TODO: Throw Exceptions
+            if (process == null)
+            {
+                Console.WriteLine("bash not found... again, how?");
+                return;
+            }
+
+            await process.WaitForExitAsync();
+        }
+
+        /// <summary>
+        /// Attempt to download the latest version of youtube-dl from their website
+        /// </summary>
+        private static async Task DownloadYoutubeDl()
+        {
+            using var process = Process.Start(
+                new ProcessStartInfo
+                {
+                    FileName = "curl",
+                    Arguments = $"-L {YoutubeDlUrl} -o {YoutubeDlPath}",
+                    RedirectStandardOutput = false,
+                });
+
+            if (process == null)
+            {
+                Console.WriteLine("Could not find curl... How?");
+                return;
+            }
+
+            await process.WaitForExitAsync();
         }
     }
 }
