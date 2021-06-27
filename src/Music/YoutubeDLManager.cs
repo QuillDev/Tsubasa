@@ -51,9 +51,10 @@ namespace Tsubasa.Music
             using var process = Process.Start(
                 new ProcessStartInfo
                 {
-                    FileName = "/bin/bash",
-                    Arguments = $"chmod a+rx {YoutubeDlPath}"
+                    FileName = "chmod",
+                    Arguments = $"a+rx {YoutubeDlPath}"
                 });
+
 
             //TODO: Throw Exceptions
             if (process == null)
